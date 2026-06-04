@@ -69,6 +69,12 @@ input[type=range]{width:100%;accent-color:#63b3ed;height:4px;cursor:pointer;marg
     <h3>Controls</h3><span style="color:rgba(255,255,255,0.4)">&#9660;</span>
   </div>
   <div class="pnl-b">
+    <div class="cg"><div class="cl">Basemap</div><div class="chks">
+      <label class="chk"><input type="radio" name="bm" checked onchange="setBase('dark')">Dark</label>
+      <label class="chk"><input type="radio" name="bm" onchange="setBase('sat')">Satellite</label>
+      <label class="chk"><input type="radio" name="bm" onchange="setBase('street')">Street</label>
+    </div></div>
+    <div class="dv"></div>
     <div class="cg"><div class="cl">Score range <span id="sv2">0 - 100</span></div>
       <input type="range" id="sMin" min="0" max="100" value="0" oninput="usl();go()">
       <input type="range" id="sMax" min="0" max="100" value="100" oninput="usl();go()"></div>
@@ -113,8 +119,13 @@ var D=[{"lat": 45.275293, "lng": -66.054542, "score": 100.0, "rawScore": 100.0, 
 var C={all:{lat:46,lng:-65.8,z:8},"Saint John":{lat:45.273,lng:-66.063,z:13},Moncton:{lat:46.088,lng:-64.778,z:13},Fredericton:{lat:45.964,lng:-66.643,z:13}};
 var map=L.map("map",{zoomControl:false,attributionControl:false}).setView([46,-65.8],8);
 L.control.zoom({position:"bottomleft"}).addTo(map);
-L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png",{maxZoom:19}).addTo(map);
+var dark=L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png",{maxZoom:19});
+var sat=L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{maxZoom:19,attribution:"Esri"});
+var street=L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"OSM"});
+dark.addTo(map);
 var mk=[],cc="all";
+var bases={dark:dark,sat:sat,street:street},curBase=dark;
+function setBase(k){map.removeLayer(curBase);curBase=bases[k];curBase.addTo(map)}
 function sc(s){return s>=75?"#e53e3e":s>=50?"#ed8936":s>=25?"#ecc94b":"#4299e1"}
 function sz2(s){return s>=75?7:s>=50?6:5}
 function fm(n){return n?n.toLocaleString():"0"}
